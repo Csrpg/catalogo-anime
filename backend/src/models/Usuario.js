@@ -39,7 +39,7 @@ const usuarioSchema = new mongoose.Schema(
   }
 );
 
-// ── Hook: hashear contraseña antes de guardar 
+// ---- Hook: hashear contraseña antes de guardar 
 
 usuarioSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
@@ -48,13 +48,13 @@ usuarioSchema.pre('save', async function (next) {
   next();
 });
 
-// ── Método: comparar contraseña introducida con la guardada 
+// ---- Método: comparar contraseña introducida con la guardada 
 
 usuarioSchema.methods.compararPassword = async function (passwordIngresada) {
   return bcrypt.compare(passwordIngresada, this.password);
 };
 
-// ── Método: ocultar contraseña al serializar a JSON 
+// ---- Método: ocultar contraseña al serializar a JSON 
 
 usuarioSchema.methods.toJSON = function () {
   const obj = this.toObject();
