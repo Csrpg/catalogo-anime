@@ -1,54 +1,65 @@
-import mongoose from 'mongoose';
-import axios from 'axios';
-import dotenv from 'dotenv';
-import Anime from '../models/Anime.js';
+import mongoose from "mongoose";
+import axios from "axios";
+import dotenv from "dotenv";
+import Anime from "../models/Anime.js";
+import { translate } from "@vitalets/google-translate-api";
 
 dotenv.config();
 
-const JIKAN_BASE = 'https://api.jikan.moe/v4';
+const JIKAN_BASE = "https://api.jikan.moe/v4";
 
 const estadoMap = {
-  'Currently Airing': 'En emisión',
-  'Finished Airing':  'Finalizado',
-  'Not yet aired':    'Próximamente',
+  "Currently Airing": "En emisión",
+  "Finished Airing": "Finalizado",
+  "Not yet aired": "Próximamente",
 };
 
 const tipoMap = {
-  TV:      'TV',
-  Movie:   'Película',
-  OVA:     'OVA',
-  ONA:     'ONA',
-  Special: 'Especial',
+  TV: "TV",
+  Movie: "Película",
+  OVA: "OVA",
+  ONA: "ONA",
+  Special: "Especial",
 };
 
 const esperar = (ms) => new Promise((res) => setTimeout(res, ms));
 
-const transformarAnime = (item) => ({
-  malId:      item.mal_id,
-  titulo:     item.title,
-  sinopsis:   item.synopsis || 'Sin sinopsis disponible.',
-  imagen:     item.images?.jpg?.large_image_url || '',
+const traducir = async (texto) => {
+  if (!texto) return "Sin sinopsis disponible.";
+  try {
+    const { text } = await translate(texto, { to: "es" });
+    return text;
+  } catch {
+    return texto; // si falla la traducción devolvemos el original
+  }
+};
+
+const transformarAnime = async (item) => ({
+  malId: item.mal_id,
+  titulo: item.title,
+  sinopsis: await traducir(item.synopsis),
+  imagen: item.images?.jpg?.large_image_url || "",
   trailer: {
-    youtubeId: item.trailer?.youtube_id || '',
-    url:       item.trailer?.url || '',
+    youtubeId: item.trailer?.youtube_id || "",
+    url: item.trailer?.url || "",
   },
-  generos:    item.genres?.map((g) => g.name) || [],
-  estado:     estadoMap[item.status] || 'Desconocido',
-  episodios:  item.episodes || null,
+  generos: item.genres?.map((g) => g.name) || [],
+  estado: estadoMap[item.status] || "Desconocido",
+  episodios: item.episodes || null,
   puntuacion: item.score || null,
-  anyo:       item.aired?.prop?.from?.year || null,
-  destacado:  item.rank <= 10,
-  tipo:       tipoMap[item.type] || 'Desconocido',
-  fuente:     'jikan',
+  anyo: item.aired?.prop?.from?.year || null,
+  destacado: item.rank <= 10,
+  tipo: tipoMap[item.type] || "Desconocido",
+  fuente: "jikan",
 });
 
 const seed = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log('Conectado a MongoDB');
+    console.log("Conectado a MongoDB");
 
-    await Anime.deleteMany({ fuente: 'jikan' });
-    console.log('Animes anteriores eliminados');
+    await Anime.deleteMany({ fuente: "jikan" });
+    console.log("Animes anteriores eliminados");
 
     const animes = [];
     for (let pagina = 1; pagina <= 5; pagina++) {
@@ -64,20 +75,26 @@ const seed = async () => {
       }
     }
 
+    console.log(`\nTraduciendo y guardando ${animes.length} animes...`);
     let insertados = 0;
     for (const item of animes) {
       try {
-        await Anime.create(transformarAnime(item));
+        const animeData = await transformarAnime(item);
+        await Anime.create(animeData);
         insertados++;
+        console.log(`${insertados}/${animes.length} - ${item.title}`);
+        await esperar(300); // pequeña pausa entre traducciones
       } catch {
         // ignorar duplicados
       }
     }
 
-    console.log(`\n Seed completado: ${insertados} animes guardados en catalogo_anime`);
+    console.log(
+      `\nSeed completado: ${insertados} animes guardados con sinopsis en español`,
+    );
     process.exit(0);
   } catch (error) {
-    console.error('Error en el seed:', error.message);
+    console.error("Error en el seed:", error.message);
     process.exit(1);
   }
 };

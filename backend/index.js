@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB } from "./src/config/db.js";
+import { conectarDB } from "./src/config/db.js";
 import { errorHandler, notFound } from "./src/middleware/error.middleware.js";
 import { requestLogger } from "./src/middleware/logger.middleware.js";
 import authRoutes from "./src/routes/auth.routes.js";
@@ -15,7 +15,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-connectDB();
+conectarDB();
 
 app.use(
   cors({
