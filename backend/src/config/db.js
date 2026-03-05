@@ -1,3 +1,4 @@
+// Importamos la librería mongoose que nos permite hablar con MongoDB
 import mongoose from 'mongoose';
 
 
