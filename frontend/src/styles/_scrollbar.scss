@@ -1,0 +1,18 @@
+// Scrollbar personalizada (solo funciona en Chrome/Edge/Safari)
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: $background;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $primary;
+  border-radius: 3px;
+
+  &:hover {
+    background: $accent;
+  }
+}

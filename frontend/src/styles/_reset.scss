@@ -1,0 +1,42 @@
+// Resetea los estilos por defecto del navegador
+// para que todos los navegadores empiecen igual.
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  cursor: none;  // usamos cursor personalizado
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: $font-body;
+  background: $background;
+  color: $text;
+  min-height: 100vh;
+  overflow-x: hidden;
+
+  // Textura sutil de fondo (radial gradient)
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(
+      ellipse at 20% 50%,
+      rgba(143, 10, 28, 0.05) 0%,
+      transparent 60%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+a       { text-decoration: none; color: inherit; }
+button  { font-family: inherit; border: none; background: none; }
+img     { max-width: 100%; display: block; }
+ul, ol  { list-style: none; }
+input, textarea { font-family: inherit; outline: none; }

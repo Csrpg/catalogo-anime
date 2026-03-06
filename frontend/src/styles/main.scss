@@ -1,0 +1,110 @@
+// Punto de entrada de los estilos.
+// Importa todos los parciales en orden.
+// Este archivo es el único que importa main.tsx.
+
+// El _ al inicio del nombre indica que son "parciales"
+// (archivos que no generan CSS por sí solos)
+
+@import './variables';   // primero las variables (las demás las usan)
+@import './reset';
+@import './cursor';
+@import './scrollbar';
+
+// ── Clases utilitarias globales ───────────────────
+
+// Tipografía display (Cinzel)
+.font-display {
+  font-family: $font-display;
+}
+
+// Tag / badge pequeño (géneros, estado, tipo)
+.tag {
+  font-family: $font-display;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.52);
+  display: inline-block;
+}
+
+.tag-dark {
+  border-color: rgba(143, 10, 28, 0.25);
+  color: $text;
+}
+
+// Botones
+.btn-primary {
+  font-family: $font-display;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.9rem 2rem;
+  background: $primary;
+  color: white;
+  border: none;
+  transition: background 0.2s, transform 0.2s;
+
+  &:hover {
+    background: $accent;
+    transform: translateY(-2px);
+  }
+}
+
+.btn-outline {
+  font-family: $font-display;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.9rem 2rem;
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: white;
+  }
+}
+
+// Encabezado de sección con línea decorativa
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+
+  h2 {
+    font-family: $font-display;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: $accent;
+    letter-spacing: 0.05em;
+  }
+
+  .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(143, 10, 28, 0.3), transparent);
+  }
+
+  .count {
+    font-family: $font-body;
+    font-size: 0.9rem;
+    color: $text;
+    opacity: 0.5;
+    font-style: italic;
+  }
+}
+
+// Animaciones de entrada
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

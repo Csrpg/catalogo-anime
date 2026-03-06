@@ -1,0 +1,22 @@
+// Cursor personalizado: un punto rojo nítido.
+// El elemento .cursor se crea en CustomCursor.tsx
+// y se mueve con JavaScript siguiendo el ratón.
+
+.cursor {
+  width: 8px;
+  height: 8px;
+  background: $primary;
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;        // no interfiere con clics
+  z-index: 9999;
+  transform: translate(-50%, -50%);  // centrado en el puntero
+  box-shadow: 0 0 0 1.5px rgba(143, 10, 28, 0.25);
+  transition: transform 0.1s ease, background 0.2s;
+
+  // Cuando el cursor está sobre un elemento clicable
+  &.hover {
+    transform: translate(-50%, -50%) scale(2);
+    background: $accent;
+  }
+}

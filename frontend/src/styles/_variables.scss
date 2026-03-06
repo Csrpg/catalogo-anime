@@ -1,0 +1,34 @@
+// Todas las variables globales de diseño.
+// Se importan en main.scss y están disponibles
+// en todos los archivos que importen main.scss.
+
+// ── Colores ───────────────────────────────────────
+$text:       #545252;
+$background: #fff9ee;
+$primary:    #8f0a1c;
+$secondary:  #FDF8F0;
+$accent:     #6a0000;
+$rojo-vivo:  #ff3d5a;   // para scores y badges
+$oscuro:     #0a0002;   // fondo hero y sidebar admin
+
+// CSS variables (accesibles desde JS con getComputedStyle)
+:root {
+  --text:       #{$text};
+  --background: #{$background};
+  --primary:    #{$primary};
+  --secondary:  #{$secondary};
+  --accent:     #{$accent};
+  --rojo-vivo:  #{$rojo-vivo};
+  --oscuro:     #{$oscuro};
+}
+
+// ── Tipografía ────────────────────────────────────
+$font-display: 'Cinzel', serif;      // títulos y labels
+$font-body:    'Crimson Pro', serif;  // texto corrido
+
+// ── Espaciado ─────────────────────────────────────
+$navbar-height: 64px;
+
+// ── Breakpoints ───────────────────────────────────
+$mobile:  768px;
+$tablet:  1024px;
