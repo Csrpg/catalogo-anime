@@ -1,23 +1,16 @@
-// Todas las interfaces TypeScript del proyecto.
-// .ts (no .tsx) porque este archivo NO tiene JSX,
-// solo define tipos que otros archivos importan.
-
-
-// ── Usuario ──────────────────────────────────────
 export interface Usuario {
   _id: string
   nombre: string
   email: string
-  rol: 'usuario' | 'admin'   // solo dos valores posibles
+  rol: 'usuario' | 'admin'
   avatar: string
   activo: boolean
   createdAt: string
 }
 
-// ── Anime ─────────────────────────────────────────
 export interface Anime {
   _id: string
-  malId?: number              // opcional: viene de Jikan, null si es manual
+  malId?: number
   titulo: string
   sinopsis: string
   imagen: string
@@ -30,40 +23,34 @@ export interface Anime {
   episodios: number | null
   puntuacion: number | null
   anyo: number | null
-  destacado: boolean          // true = aparece en el carrusel
+  destacado: boolean
   tipo: 'TV' | 'Película' | 'OVA' | 'ONA' | 'Especial' | 'Desconocido'
   fuente: 'jikan' | 'manual'
   createdAt: string
 }
 
-// ── Reseña ────────────────────────────────────────
 export interface Resena {
   _id: string
-  usuario: Usuario            // populate() lo convierte en objeto
-  anime: string | Anime       // puede ser ID o objeto según la ruta
-  puntuacion: number | null   // opcional (1-10)
-  comentario: string          // opcional (max 1000 chars)
+  usuario: Usuario
+  anime: string | Anime
+  puntuacion: number | null
+  comentario: string
   createdAt: string
 }
 
-// ── Favorito ──────────────────────────────────────
 export interface Favorito {
   _id: string
   usuario: string
-  anime: Anime                // populate() lo convierte en objeto
+  anime: Anime
   createdAt: string
 }
 
-// ── Respuestas de la API ──────────────────────────
-
-// POST /api/auth/registro  y  POST /api/auth/login
 export interface AuthResponse {
   token: string
   usuario: Usuario
   mensaje: string
 }
 
-// GET /api/anime  (con paginación)
 export interface AnimesResponse {
   animes: Anime[]
   total: number
@@ -71,7 +58,6 @@ export interface AnimesResponse {
   totalPaginas: number
 }
 
-// GET /api/admin/estadisticas
 export interface Estadisticas {
   totalAnimes: number
   totalUsuarios: number

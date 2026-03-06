@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Anime } from '../types'
+import type { Anime } from '../types/index.ts'
 import { getAnimesApi } from '../services/api'
 
 const Carrusel = () => {

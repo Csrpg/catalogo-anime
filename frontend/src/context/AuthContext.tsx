@@ -8,8 +8,9 @@
 // y sacar el usuario o el token sin pasarlo por props.
 
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { Usuario } from '../types'
+import { createContext, useContext, useState, useEffect } from 'react'
+import type { ReactNode } from 'react'
+import type { Usuario } from '../types'
 import { perfilApi } from '../services/api'
 
 // ── 1. Definir qué va dentro de la mochila ───────

@@ -1,4 +1,3 @@
-
 // Formulario de registro de nuevo usuario.
 
 import { useState } from 'react'

@@ -1,7 +1,7 @@
 // Página de inicio: carrusel de destacados + grid de animes recientes.
 
 import { useEffect, useState } from 'react'
-import { Anime } from '../types'
+import type { Anime } from '../types'
 import { getAnimesApi } from '../services/api'
 import Carrusel from '../components/Carrusel'
 import AnimeCard from '../components/AnimeCard'

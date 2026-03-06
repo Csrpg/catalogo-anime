@@ -1,7 +1,7 @@
 // Lista de animes favoritos del usuario logueado.
 
 import { useEffect, useState } from 'react'
-import { Favorito } from '../types'
+import type { Favorito } from '../types'
 import { getFavoritosApi, deleteFavoritoApi } from '../services/api'
 import AnimeCard from '../components/AnimeCard'
 

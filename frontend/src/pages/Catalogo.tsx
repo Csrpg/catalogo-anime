@@ -1,7 +1,7 @@
 // Grid completo de animes con búsqueda, filtros por género y paginación.
 
 import { useEffect, useState } from 'react'
-import { Anime } from '../types'
+import type { Anime } from '../types'
 import { getAnimesApi, getGenerosApi } from '../services/api'
 import AnimeCard from '../components/AnimeCard'
 
@@ -45,7 +45,7 @@ const Catalogo = () => {
     setPagina(1)
   }
 
-  const s: React.CSSProperties = {}
+  // const s: React.CSSProperties = {}
 
   return (
     <main style={{ paddingTop: '64px', minHeight: '100vh' }}>

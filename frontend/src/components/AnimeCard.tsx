@@ -3,7 +3,7 @@
 // Al hacer hover: imagen oscurecida + score + géneros + sinopsis + botón.
 
 import { useNavigate } from 'react-router-dom'
-import { Anime } from '../types'
+import type { Anime } from '../types'
 
 interface Props {
   anime: Anime

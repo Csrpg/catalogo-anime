@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Anime, Resena } from '../types'
+import type { Anime, Resena } from '../types'
 import { getAnimeApi, getResenasApi, addFavoritoApi, deleteFavoritoApi, getFavoritosApi, crearResenaApi, borrarResenaApi } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
