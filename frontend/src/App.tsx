@@ -1,33 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from 'react-router-dom'
 
-function App() {
-  const [count, setCount] = useState(0)
+import Navbar        from './components/Navbar'
+import Footer        from './components/Footer'
+import CustomCursor  from './components/CustomCursor'
+import RutaPrivada   from './components/RutaPrivada'
+import RutaAdmin     from './components/RutaAdmin'
 
+import Inicio        from './pages/Inicio'
+import Catalogo      from './pages/Catalogo'
+import DetalleAnime  from './pages/DetalleAnime'
+import Login         from './pages/Login'
+import Registro      from './pages/Registro'
+import Perfil        from './pages/Perfil'
+import Favoritos     from './pages/Favoritos'
+import Admin         from './pages/Admin'
+import NoEncontrado  from './pages/NoEncontrado'
+
+const App = () => {
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {/* Cursor personalizado (se monta una vez, funciona en toda la app) */}
+      <CustomCursor />
+
+      {/* Navbar fijo en todas las páginas */}
+      <Navbar />
+
+      {/* Rutas */}
+      <Routes>
+        {/* Públicas */}
+        <Route path="/"           element={<Inicio />} />
+        <Route path="/catalogo"   element={<Catalogo />} />
+        <Route path="/anime/:id"  element={<DetalleAnime />} />
+        <Route path="/login"      element={<Login />} />
+        <Route path="/registro"   element={<Registro />} />
+
+        {/* Protegidas (necesitan login) */}
+        <Route path="/favoritos" element={
+          <RutaPrivada><Favoritos /></RutaPrivada>
+        } />
+        <Route path="/perfil" element={
+          <RutaPrivada><Perfil /></RutaPrivada>
+        } />
+
+        {/* Protegida (necesita rol admin) */}
+        <Route path="/admin" element={
+          <RutaAdmin><Admin /></RutaAdmin>
+        } />
+
+        {/* 404 */}
+        <Route path="*" element={<NoEncontrado />} />
+      </Routes>
+
+      {/* Footer en todas las páginas excepto login/registro */}
+      <Footer />
     </>
   )
 }
