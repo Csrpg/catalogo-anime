@@ -2,6 +2,7 @@
 // RutaAdmin.tsx se encarga de bloquear el acceso a otros usuarios.
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Usuario, Estadisticas } from "../types";
 import {
   getEstadisticasApi,
@@ -16,6 +17,7 @@ type Seccion = "estadisticas" | "usuarios";
 
 const Admin = () => {
   const { usuario: yo } = useAuth();
+  const navigate = useNavigate();
   const [seccion, setSeccion] = useState<Seccion>("estadisticas");
   const [stats, setStats] = useState<Estadisticas | null>(null);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
@@ -61,43 +63,85 @@ const Admin = () => {
     setUsuarios((prev) => prev.filter((u) => u._id !== id));
   };
 
+  // Configuración de cada tarjeta de estadísticas
+  // Al hacer clic navega a la sección correspondiente (o muestra un aviso)
+  const tarjetas = stats
+    ? [
+        {
+          label: "Animes",
+          valor: stats.totalAnimes,
+          icono: "🎌",
+          seccionDestino: null,
+          navegarA: "/catalogo",
+          descripcion: "en el catálogo",
+        },
+        {
+          label: "Usuarios",
+          valor: stats.totalUsuarios,
+          icono: "👤",
+          seccionDestino: "usuarios" as Seccion,
+          navegarA: null,
+          descripcion: "registrados",
+        },
+        {
+          label: "Reseñas",
+          valor: stats.totalResenas,
+          icono: "✍️",
+          seccionDestino: null,
+          navegarA: null,
+          descripcion: "publicadas",
+        },
+        {
+          label: "Favoritos",
+          valor: stats.totalFavoritos,
+          icono: "❤️",
+          seccionDestino: null,
+          navegarA: null,
+          descripcion: "guardados",
+        },
+      ]
+    : [];
+
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "210px 1fr",
+        gridTemplateColumns: "220px 1fr",
         minHeight: "100vh",
         paddingTop: "64px",
       }}
     >
-      {/* Sidebar */}
+      {/* ── SIDEBAR ── */}
       <aside
         style={{
           background: "#0a0002",
           padding: "2rem 0",
-          borderRight: "1px solid rgba(143,10,28,0.15)",
+          borderRight: "1px solid rgba(143,10,28,0.2)",
         }}
       >
+        {/* Título del panel */}
         <div
           style={{
             fontFamily: "'Cinzel', serif",
-            fontSize: "0.56rem",
+            fontSize: "0.65rem",        // más grande que antes
             letterSpacing: "0.3em",
             textTransform: "uppercase",
-            color: "var(--primary)",
+            color: "var(--primary)",    // rojo, no gris
             padding: "0 1.5rem",
-            marginBottom: "1.5rem",
+            marginBottom: "2rem",
+            opacity: 1,                 // sin opacidad reducida
           }}
         >
           Panel Admin
         </div>
-        <ul style={{ listStyle: "none" }}>
+
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
           {(
             [
-              ["estadisticas", "⊞ Estadísticas"],
-              ["usuarios", "◉ Usuarios"],
-            ] as [Seccion, string][]
-          ).map(([key, label]) => (
+              ["estadisticas", "⊞", "Estadísticas"],
+              ["usuarios", "◉", "Usuarios"],
+            ] as [Seccion, string, string][]
+          ).map(([key, icono, label]) => (
             <li key={key}>
               <button
                 onClick={() => setSeccion(key)}
@@ -106,21 +150,43 @@ const Admin = () => {
                   alignItems: "center",
                   gap: "0.75rem",
                   width: "100%",
-                  padding: "0.8rem 1.5rem",
+                  padding: "0.9rem 1.5rem",
                   fontFamily: "'Cinzel', serif",
-                  fontSize: "0.6rem",
-                  letterSpacing: "0.1em",
+                  fontSize: "0.68rem",      // más grande → más legible
+                  letterSpacing: "0.12em",
                   textTransform: "uppercase",
-                  color: seccion === key ? "white" : "rgb(255, 251, 251)",
+                  // Activo → blanco brillante / Inactivo → gris claro visible
+                  color: seccion === key ? "white" : "rgba(255,255,255,0.65)",
                   background:
-                    seccion === key ? "rgba(143,10,28,0.18)" : "transparent",
-                  border: "none", // Quitamos los bordes generales
-                  borderLeft: `2px solid ${seccion === key ? "var(--primary)" : "transparent"}`, // Mantenemos solo uno
+                    seccion === key
+                      ? "rgba(143,10,28,0.25)"
+                      : "transparent",
+                  border: "none",
+                  borderLeft: `2px solid ${
+                    seccion === key ? "var(--primary)" : "transparent"
+                  }`,
                   textAlign: "left",
                   transition: "all 0.2s",
-                  cursor: "pointer", // Tip extra: añade esto para que se vea que es clicable
+                  cursor: "pointer",
+                }}
+                // Hover — cambia color al pasar el ratón
+                onMouseEnter={(e) => {
+                  if (seccion !== key) {
+                    (e.currentTarget as HTMLButtonElement).style.color = "white";
+                    (e.currentTarget as HTMLButtonElement).style.background =
+                      "rgba(255,255,255,0.05)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (seccion !== key) {
+                    (e.currentTarget as HTMLButtonElement).style.color =
+                      "rgba(255,255,255,0.65)";
+                    (e.currentTarget as HTMLButtonElement).style.background =
+                      "transparent";
+                  }
                 }}
               >
+                <span style={{ fontSize: "0.9rem" }}>{icono}</span>
                 {label}
               </button>
             </li>
@@ -128,17 +194,19 @@ const Admin = () => {
         </ul>
       </aside>
 
-      {/* Contenido */}
+      {/* ── CONTENIDO PRINCIPAL ── */}
       <main style={{ padding: "2.5rem" }}>
+
         {/* ── ESTADÍSTICAS ── */}
         {seccion === "estadisticas" && (
           <>
+            {/* Cabecera */}
             <div
               style={{
                 display: "flex",
                 alignItems: "baseline",
                 gap: "1.5rem",
-                marginBottom: "2rem",
+                marginBottom: "2.5rem",
               }}
             >
               <h2
@@ -160,58 +228,128 @@ const Admin = () => {
                 }}
               />
             </div>
+
+            {/* Tarjetas — clicables si tienen seccionDestino */}
             {stats && (
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(4, 1fr)",
-                  gap: "1.5rem",
-                }}
-              >
-                {(
-                  [
-                    ["Animes", stats.totalAnimes],
-                    ["Usuarios", stats.totalUsuarios],
-                    ["Reseñas", stats.totalResenas],
-                    ["Favoritos", stats.totalFavoritos],
-                  ] as [string, number][]
-                ).map(([label, val]) => (
-                  <div
-                    key={label}
-                    style={{
-                      padding: "1.5rem",
-                      background: "white",
-                      border: "1px solid rgba(143,10,28,0.07)",
-                      borderTop: "3px solid var(--primary)",
-                    }}
-                  >
+              <>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(4, 1fr)",
+                    gap: "1.5rem",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  {tarjetas.map(({ label, valor, icono, seccionDestino, navegarA, descripcion }) => (
                     <div
+                      key={label}
+                      onClick={() => {
+                        if (navegarA) navigate(navegarA);
+                        else if (seccionDestino) setSeccion(seccionDestino);
+                      }}
                       style={{
-                        fontFamily: "'Cinzel', serif",
-                        fontSize: "2.4rem",
-                        fontWeight: 900,
-                        color: "var(--primary)",
-                        lineHeight: 1,
-                        marginBottom: "0.3rem",
+                        padding: "1.8rem 1.5rem",
+                        background: "white",
+                        border: "1px solid rgba(143,10,28,0.07)",
+                        borderTop: "3px solid var(--primary)",
+                        cursor: (navegarA || seccionDestino) ? "pointer" : "default",
+                        transition: "transform 0.15s, box-shadow 0.15s",
+                        position: "relative",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (navegarA || seccionDestino) {
+                          (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
+                          (e.currentTarget as HTMLDivElement).style.boxShadow = "0 6px 20px rgba(143,10,28,0.12)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (navegarA || seccionDestino) {
+                          (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+                          (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
+                        }
                       }}
                     >
-                      {val}
+                      {/* Icono */}
+                      <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>
+                        {icono}
+                      </div>
+
+                      {/* Número */}
+                      <div
+                        style={{
+                          fontFamily: "'Cinzel', serif",
+                          fontSize: "2.4rem",
+                          fontWeight: 900,
+                          color: "var(--primary)",
+                          lineHeight: 1,
+                          marginBottom: "0.3rem",
+                        }}
+                      >
+                        {valor}
+                      </div>
+
+                      {/* Etiqueta */}
+                      <div
+                        style={{
+                          fontFamily: "'Cinzel', serif",
+                          fontSize: "0.56rem",
+                          letterSpacing: "0.15em",
+                          textTransform: "uppercase",
+                          color: "var(--text)",
+                          opacity: 0.42,
+                          marginBottom: "0.2rem",
+                        }}
+                      >
+                        {label}
+                      </div>
+
+                      {/* Descripción pequeña */}
+                      <div
+                        style={{
+                          fontFamily: "'Crimson Pro', serif",
+                          fontSize: "0.8rem",
+                          color: "var(--text)",
+                          opacity: 0.35,
+                          fontStyle: "italic",
+                        }}
+                      >
+                        {descripcion}
+                      </div>
+
+                      {/* Flecha si es clicable */}
+                      {(seccionDestino || navegarA) && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            bottom: "1rem",
+                            right: "1rem",
+                            fontFamily: "'Cinzel', serif",
+                            fontSize: "0.55rem",
+                            letterSpacing: "0.1em",
+                            color: "var(--primary)",
+                            opacity: 0.5,
+                          }}
+                        >
+                          Ver →
+                        </div>
+                      )}
                     </div>
-                    <div
-                      style={{
-                        fontFamily: "'Cinzel', serif",
-                        fontSize: "0.56rem",
-                        letterSpacing: "0.15em",
-                        textTransform: "uppercase",
-                        color: "var(--text)",
-                        opacity: 0.42,
-                      }}
-                    >
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+
+                {/* Nota debajo de las tarjetas */}
+                <p
+                  style={{
+                    fontFamily: "'Crimson Pro', serif",
+                    fontSize: "0.85rem",
+                    color: "var(--text)",
+                    opacity: 0.4,
+                    fontStyle: "italic",
+                  }}
+                >
+                  * Las tarjetas con "Ver →" son clicables y te llevan a esa sección.
+                </p>
+              </>
             )}
           </>
         )}
@@ -403,7 +541,6 @@ const Admin = () => {
                             flexWrap: "wrap",
                           }}
                         >
-                          {/* No puedes cambiar tu propio rol */}
                           {u._id !== yo?._id && (
                             <>
                               <Accion onClick={() => cambiarRol(u._id, u.rol)}>
@@ -441,8 +578,14 @@ const Admin = () => {
         )}
       </main>
 
-      {/* Responsive */}
-      <style>{`@media (max-width: 768px) { div[style*="gridTemplateColumns: 210px 1fr"] { grid-template-columns: 1fr; } aside { display: none; } }`}</style>
+      <style>{`
+        @media (max-width: 768px) {
+          div[style*="gridTemplateColumns: 220px 1fr"] {
+            grid-template-columns: 1fr;
+          }
+          aside { display: none; }
+        }
+      `}</style>
     </div>
   );
 };
@@ -468,6 +611,7 @@ const Accion = ({
       border: `1px solid ${danger ? "rgba(180,0,0,0.3)" : "rgba(143,10,28,0.22)"}`,
       color: danger ? "#c00" : "var(--primary)",
       transition: "all 0.2s",
+      cursor: "pointer",
     }}
   >
     {children}
